@@ -12,3 +12,5 @@ Library allows you to make sequence execution of Events, Handlers, etc. in next 
     .broadcast('startBeginningAnimation')
     .run();
 ````
+
+Library now works for AngularJS, using its <code>$scope</code> and events mechanism. But soon it will be re-implemented as separate library.
