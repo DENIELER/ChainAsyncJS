@@ -1,7 +1,7 @@
 {
   "name": "angular-sequence-events",
   "version": "0.1.0",
-  "description": "Library allows you to make sequence code for execution of angular events, handlers, broadcasts, etc.",
+  "description": "Library allows you to make sequential code for execution of angular events, handlers, broadcasts, etc.",
   "main": "angular-sequence.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
