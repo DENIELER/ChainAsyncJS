@@ -20,6 +20,8 @@ Library allows you to make sequence execution of events, handlers, broadcasts, e
 
 Library now works for AngularJS, using its `$scope` events mechanism. 
 
+Lib is in ES2015 syntax, so if you need it in ES5, please use babel to transpile.
+
 # Action types
 
 Library have now 3 types of functions:
