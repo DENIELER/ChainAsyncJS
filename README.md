@@ -1,4 +1,4 @@
-# ChainAsyncJS
+# sequence js
 Library allows you to make sequence execution of Events, Handlers, etc. in next way:
 
 ````js
