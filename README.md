@@ -1,4 +1,4 @@
-# Angular Events Sequence
+# Angular Sequence Events
 Library allows you to make sequence execution of events, handlers, broadcasts, etc. in next way:
 
 ````js
