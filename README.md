@@ -2,9 +2,9 @@
 Library allows you to make sequence execution of events, handlers, broadcasts, etc. in next way:
 
 ````js
-    var chain = new Chain(this.$scope);
+    var sequence = new Sequence(this.$scope);
 
-    chain
+    sequence
     .wait('userAction-1')
     .wait('userScroll-1', self.scrollManager)
     .broadcast('userFinished-Scroll-1-Action')
@@ -37,9 +37,9 @@ When you create the sequence you are starting some journey. In which you could u
 example:
 
 ````js
-    var chain = new Chain(this.$scope);
+    var sequence = new Sequence(this.$scope);
 
-    chain
+    sequence
     .wait('userAction-1')
     .wait('userScroll-1', self.scrollManager)
     .run();
