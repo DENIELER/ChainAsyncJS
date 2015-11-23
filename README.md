@@ -1,16 +1,46 @@
-# sequence js
-Library allows you to make sequence execution of Events, Handlers, etc. in next way:
+# Angular Events Sequence
+Library allows you to make sequence execution of events, handlers, broadcasts, etc. in next way:
 
 ````js
     var chain = new Chain(this.$scope);
+
+    chain
+    .wait('userAction-1')
+    .wait('userScroll-1', self.scrollManager)
+    .broadcast('userFinished-Scroll-1-Action')
+    .wait('userAction-2')
+    .wait('userScroll-2', self.scrollManager)
+    .exec(myFunction)
+    .broadcast('userFinished-Scroll-2-Action')
+    .wait('userAction-3')
+    .run({
+      loopLastAction: true
+    });
+````
+
+Library now works for AngularJS, using its <code>$scope</code> events mechanism. 
+
+# Action types
+
+Library have now 3 types of functions:
     
-    chain.wait('meetAnimationFinished')
-    .wait('waitForScroll', self.scrollManager)
-    .broadcast('startSkillsAnimation')
-    .wait('skillsAnimationFinished')
-    .wait('waitForScroll', self.scrollManager)
-    .broadcast('startBeginningAnimation')
+    wait - to wait when event has been executed
+    exec - executes some code
+    broadcast - broadcasts the event
+    
+# Mechanism
+
+When you create the sequence you are starting some journey. In which you could use 3 types of functions: wait, exec, broadcast. 
+
+example:
+
+````js
+    var chain = new Chain(this.$scope);
+
+    chain
+    .wait('userAction-1')
+    .wait('userScroll-1', self.scrollManager)
     .run();
 ````
 
-Library now works for AngularJS, using its <code>$scope</code> and events mechanism. But soon it will be re-implemented as separate library.
+Here you are waiting for the event 'userAction-1' from any angular component, then when event has been fired you are going to the next step - waiting for the event 'userScroll-1'. When you pass second parameter in wait function if means that you are calling method 'userSCroll-1' in self.scrollManager object and this method is getting callback as parameter. And when callback will be fired from this object next sequence method will be executed.
