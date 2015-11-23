@@ -25,7 +25,9 @@ Library now works for AngularJS, using its `$scope` events mechanism.
 Library have now 3 types of functions:
     
 `wait (eventName)` - to wait when event has been executed
+
 `exec (funciton)` - executes some code
+
 `broadcast (eventName)` - broadcasts the event
     
 # Mechanism
