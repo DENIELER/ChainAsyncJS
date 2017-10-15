@@ -6,7 +6,7 @@ class SequenceService {
 
     this.functions = [];
     this.index = 0;
-    
+
     this.constants = {
       functionTypes: {
         wait: 'wait',
@@ -70,7 +70,7 @@ class SequenceService {
     });
     self.index++;
   }
-  _execFunction (index) {
+  _execFunction (index, eventParams) {
     var self = this;
 
     if (self.functions[index]) {
@@ -78,10 +78,18 @@ class SequenceService {
 
       console.log('Sequence: Executing function: ' + (func.name ? func.name : '{Anonymous function}'));
 
-      func.f.apply(self, func.arguments);
+      //func.arguments is an array here []
+      //eventParams is an object here {}
+      var eventParams = eventParams || {};
+      var eventParamsArray = Object.keys(eventParams).map(function(x) { return eventParams[x]; });
+      var args = []
+        .concat(func.arguments)
+        .concat(eventParamsArray);
 
-      if ((func.type === self.constants.functionTypes.exec 
-           || func.type === self.constants.functionTypes.broadcast) 
+      func.f.call(self, args);
+
+      if ((func.type === self.constants.functionTypes.exec
+           || func.type === self.constants.functionTypes.broadcast)
           && self.functions[index + 1])
       {
         self._execFunction(index + 1);
@@ -89,53 +97,58 @@ class SequenceService {
     } else if (self.functions.length <= index) {
       if (self.loopLastAction)
         self._execFunction(index - 1);
-      else 
+      else
         return;
     } else {
       console.error('Sequence: You are trying to execute not existing function.' +
       'After "wait" functions should be "exec"');
     }
   }
-  
+
   _waitEvent (event) {
     var self = this;
-    
+
     var index = self.index;
-    
+
     self._addFunction(function WaitEvent() {
-        var _removeEventHandler = self._addEventHandler(event, function CallBack() {
-          _removeEventHandler(); 
-          self._execFunction.call(self, index + 1)
+        var _removeEventHandler = self._addEventHandler(event, function CallBack(eventName, params) {
+          _removeEventHandler();
+          self._execFunction.call(self, index + 1, params)
         });
     }, self.constants.functionTypes.wait);
   }
   _waitExternalEvent (event, eventTarget) {
     var self = this;
-    
+
     var index = self.index;
     var eventName = "manualChainEvent_" + (index + 1).toString();
 
-    self._addFunction(function WaitInnerEvent() {
-      var _removeEventHandler = self._addEventHandler(eventName, function CallBack () {
+    self._addFunction(function WaitInnerEvent(args) {
+      var _removeEventHandler = self._addEventHandler(eventName, function CallBack (eventName, params) {
         _removeEventHandler();
-        self._execFunction.call(self, index + 1);
+        self._execFunction.call(self, index + 1, params);
       });
 
-      eventTarget[event].call(eventTarget, function InnerEventCallback() {
+      var externalFunctionArgs = [];
+      var callback = function InnerEventCallback() {
         console.log('Sequence: Broadcast inner event ' + eventName);
 
         self._fireEvent(eventName);
-      });
+      };
+      externalFunctionArgs.push(callback);
+      externalFunctionArgs = externalFunctionArgs.concat(args);
+
+      eventTarget[event].apply(eventTarget, externalFunctionArgs);
     }, self.constants.functionTypes.wait);
   }
-  
+
   _addEventHandler (event, handler) {
     var removeEventHandler = this.scope.$on(event, handler);
     return removeEventHandler;
   }
   _fireEvent (event, args) {
     var args = args || [];
-    
+
     this.scope.$broadcast(event, args);
   }
 }
